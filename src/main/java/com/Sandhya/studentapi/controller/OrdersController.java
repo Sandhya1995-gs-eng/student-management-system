@@ -13,18 +13,12 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/payments")
-
 public class OrdersController {
     @Autowired
     private PaymentService paymentService;
     @Autowired
-    private final ObjectMapper objectMapper;
+    private  ObjectMapper objectMapper;
 
-    @Autowired
-    public OrdersController(PaymentService paymentService, ObjectMapper objectMapper) {
-        this.paymentService = paymentService;
-        this.objectMapper = objectMapper;
-    }
     @PostMapping("/orders")
     public ResponseEntity<String> initiatePayment(@RequestBody CourseOrderRequestDTO courseOrderRequestDTO) {
         try{
