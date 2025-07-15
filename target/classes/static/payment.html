@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Pay Now</title>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+</head>
+<body>
+<h1>Course Payment</h1>
+<button onclick="createOrder()">Pay Now</button>
+
+<script>
+    function createOrder() {
+        fetch('http://localhost:8080/api/payments/orders', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                courseName: "Java",
+                studentEmail: "test@test.com",
+                amount: 50000 // ₹500 in paise
+            })
+        })
+            .then(response => response.json())
+            .then(order => {
+                openRazorpay(order);
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    function openRazorpay(order) {
+        var options = {
+            "key": "rzp_test_7AYvKJBSW7Fl2c", // 🔁 Replace with your Razorpay Key ID
+            "amount": order.amount,
+            "currency": "INR",
+            "name": order.courseName,
+            "description": "Course Payment",
+            "order_id": order.razorpayOrderId,
+            "handler": function (response) {
+                alert("Payment successful!");
+                console.log(response);
+            },
+            "prefill": {
+                "email": order.studentEmail,
+            },
+            "theme": {
+                "color": "#3399cc"
+            }
+        };
+
+        var rzp = new Razorpay(options);
+        rzp.open();
+    }
+</script>
+</body>
+</html>

@@ -1,16 +1,14 @@
 package com.Sandhya.studentapi.dto;
 
-import jakarta.persistence.Id;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class CourseDTO {
-
-    private int courseId;
+public class CourseOrderRequestDTO {
     private String courseName;
-    private Long teacherID;
-
+    private float amount;
+    private String studentName;
+    private String studentEmail;
 
 }

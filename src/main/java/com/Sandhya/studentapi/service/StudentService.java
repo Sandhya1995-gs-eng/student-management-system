@@ -22,6 +22,8 @@ public class StudentService {
     private StudentRepository studentRepository;
     @Autowired
     private CourseRepository courseRepository;
+    @Autowired
+    private CourseAssignment courseAssignment;
 
     public Student createStudent(StudentRequestDTO student) {
 
@@ -35,28 +37,36 @@ public class StudentService {
         newStudent.setMathMarks(student.getMathMarks());
         newStudent.setScienceMarks(student.getScienceMarks());
         newStudent.setSocialMarks(student.getSocialMarks());
-
         float total = newStudent.getMathMarks() + newStudent.getScienceMarks() + newStudent.getSocialMarks();
         newStudent.setTotal(total);
         newStudent.setPercentage(total / 3.0f);
         float percentage = newStudent.getPercentage();
         int courseId = student.getCourseId();
-        if (courseId == ELECTRONICS_COURSE_ID && percentage < 75) {
-            throw new IllegalArgumentException("Your percentage is "+percentage+ " ,Student percentage must be greater than 75 to opt for Electrics, so choose other course");
-        }
-        if (courseId == STATICS_COURSE_ID && percentage < 80) {
-            throw new IllegalArgumentException("Your percentage is " +percentage+ " ,Student percentage must be greater than 85 to opt for Statics, so choose other course");
-        }
-        if (courseId == COMPUTERSCIENCE_COURSE_ID && percentage < 85) {
-            throw new IllegalArgumentException("Your percentage is " +percentage+ " ,Student percentage must be greater than 85 to opt for Computerscience, so choose other course");
+        CourseAssignment courseAssignment = new CourseAssignment();
+        courseAssignment.assignCourseBasedOnPercentage(courseId,percentage);
+        return newStudent;
+    }
 
+    public Student updateStudent(String name, StudentRequestDTO student) {
+        Optional<Student> optionalStudent=studentRepository.findByStudentName(name);
+        if(optionalStudent.isPresent()) {
+            Student updatedStudent=optionalStudent.get();
+            updatedStudent.setStudentName(student.getName());
+            updatedStudent.setStudentEmail(student.getEmail());
+            updatedStudent.setMathMarks(student.getMathMarks());
+            updatedStudent.setScienceMarks(student.getScienceMarks());
+            updatedStudent.setSocialMarks(student.getSocialMarks());
+            float total = updatedStudent.getMathMarks() + updatedStudent.getScienceMarks() + updatedStudent.getSocialMarks();
+            updatedStudent.setTotal(total);
+            updatedStudent.setPercentage(total / 3.0f);
+            int courseId = student.getCourseId();
+            courseAssignment.assignCourseBasedOnPercentage(courseId,total);
+            studentRepository.save(updatedStudent);
+            return updatedStudent;
+        }else {
+            throw new EntityNotFoundException("Student not found with name " + name);
         }
-        if (courseId == BIOLOGY_COURSE_ID && percentage < 95) {
-            IllegalArgumentException ex=new IllegalArgumentException("Your percentage is " +percentage+ " ,Student percentage must be greater than 95 to opt for Biology, so choose other course");
-            throw ex;
-        }
-        newStudent.setCourse(course.get());
-        return studentRepository.save(newStudent);
+
 
     }
 

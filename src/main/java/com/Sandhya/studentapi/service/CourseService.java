@@ -15,6 +15,7 @@ public class CourseService {
         Course newCourse = new Course();
         newCourse.setCourseId(course.getCourseId());
         newCourse.setCourseName(course.getCourseName());
+
         return courseRepository.save(newCourse);
     }
 }

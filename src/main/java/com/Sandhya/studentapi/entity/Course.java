@@ -14,6 +14,9 @@ public class Course {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int courseId;
     private String courseName;
+    @ManyToOne
+    @JoinColumn(name="teacher_Job_id")
+    private Teacher teacher;
 
 
 
